@@ -1,6 +1,6 @@
-import clsx from "clsx";
-import { LANG } from "../../utils/getLangWords";
-import Button from "../Button";
+import clsx from 'clsx';
+import { LANG, areWordsTheSame } from '../../utils/getLangWords';
+import Button from '../Button';
 
 type UUID = `${string}-${string}-${string}-${string}-${string}`;
 
@@ -25,29 +25,25 @@ interface ColumnProps {
 }
 
 const WordColumn = ({ words, language, setMatch, match }: ColumnProps) => {
-  function handleClick(id: string) {
-    language === "spanish"
+  function saveWordID(id: string) {
+    language === 'spanish'
       ? setMatch({ ...match, spanishWordID: id })
       : setMatch({ ...match, englishWordID: id });
   }
 
   const borderStyle =
     match.spanishWordID || match.englishWordID
-      ? "focus:border-blue-500"
+      ? 'focus:border-blue-500'
       : undefined;
-
-  function isWordTheSame(spanishWord: string, englishWord: string) {
-    return spanishWord === englishWord;
-  }
 
   const correctMatchStyle = (
     spanishWordID: string,
     englishWordID: string,
     buttonID: string
   ) => {
-    return isWordTheSame(spanishWordID, englishWordID) &&
+    return areWordsTheSame(spanishWordID, englishWordID) &&
       (buttonID === spanishWordID || buttonID === englishWordID)
-      ? "bg-green-500 text-gray-900"
+      ? 'bg-green-500 text-gray-900'
       : null;
   };
 
@@ -57,10 +53,13 @@ const WordColumn = ({ words, language, setMatch, match }: ColumnProps) => {
         <Button
           key={`${id}-${text}`}
           id={id}
-          onClick={() => handleClick(id)}
+          onClick={() => saveWordID(id)}
           className={clsx(
             borderStyle,
-            correctMatchStyle(match.spanishWordID, match.englishWordID, id)
+            correctMatchStyle(match.spanishWordID, match.englishWordID, id),
+            id === match.spanishWordID &&
+              id === match.englishWordID &&
+              'opacity-0 transition-opacity delay-150 duration-300'
           )}
         >
           {text}

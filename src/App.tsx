@@ -1,47 +1,25 @@
-import { useEffect, useState } from "react";
-import "./App.css";
-import WordColumn from "./components/Column";
-import { getWords } from "./utils/getLangWords";
-
-const data = [
-  {
-    id: crypto.randomUUID(),
-    spanish: "niña",
-    english: "girl",
-  },
-  {
-    id: crypto.randomUUID(),
-    spanish: "niño",
-    english: "boy",
-  },
-  {
-    id: crypto.randomUUID(),
-    spanish: "manzana",
-    english: "apple",
-  },
-  {
-    id: crypto.randomUUID(),
-    spanish: "carro",
-    english: "car",
-  },
-];
+import { useEffect, useState } from 'react';
+import './App.css';
+import WordColumn from './components/Column';
+import { areWordsTheSame, getWords } from './utils/getLangWords';
+import { data } from './utils/data';
 
 function App() {
   const [match, setMatch] = useState({
-    spanishWordID: "",
-    englishWordID: "",
+    spanishWordID: '',
+    englishWordID: '',
   });
 
   const [words, setWords] = useState({
-    spanishWords: getWords("spanish", data),
-    englishWords: getWords("english", data),
+    spanishWords: getWords('spanish', data),
+    englishWords: getWords('english', data),
   });
 
   useEffect(() => {
     if (
       Boolean(match.englishWordID) &&
       Boolean(match.spanishWordID) &&
-      match.englishWordID === match.spanishWordID
+      areWordsTheSame(match.englishWordID, match.spanishWordID)
     ) {
       const newSpanishWords = words.spanishWords.filter(
         (word) => word.id !== match.spanishWordID
@@ -50,10 +28,17 @@ function App() {
         (word) => word.id !== match.englishWordID
       );
 
-      setWords({
-        spanishWords: newSpanishWords,
-        englishWords: newEnglishWords,
+      setMatch({
+        spanishWordID: '',
+        englishWordID: '',
       });
+
+      setTimeout(() => {
+        setWords({
+          spanishWords: newSpanishWords,
+          englishWords: newEnglishWords,
+        });
+      }, 500);
     }
   }, [match]);
 

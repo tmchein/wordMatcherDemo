@@ -14,3 +14,7 @@ export function getWords(lang: LANG, data: DATA_MAP[]) {
     };
   });
 }
+
+export function areWordsTheSame(spanishWord: string, englishWord: string) {
+  return spanishWord === englishWord;
+}
