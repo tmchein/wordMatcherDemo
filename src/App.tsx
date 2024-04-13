@@ -1,18 +1,29 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import WordColumn from './components/Column';
-import { areWordsTheSame, getWords } from './utils/getLangWords';
+import {
+  areWordsTheSame,
+  getRandomWord,
+  getWords,
+  shuffleArray,
+} from './utils/getLangWords';
 import { data } from './utils/data';
 
 function App() {
-  const [match, setMatch] = useState({
+  const [match, setMatch] = useState<{
+    spanishWordID: string;
+    englishWordID: string;
+  }>({
     spanishWordID: '',
     englishWordID: '',
   });
 
+  const spanishWords = getWords('spanish', data).slice(0, 5);
+  const englishWords = getWords('english', data).slice(0, 5);
+
   const [words, setWords] = useState({
-    spanishWords: getWords('spanish', data),
-    englishWords: getWords('english', data),
+    spanishWords: shuffleArray(spanishWords),
+    englishWords: shuffleArray(englishWords),
   });
 
   useEffect(() => {
@@ -21,26 +32,37 @@ function App() {
       Boolean(match.spanishWordID) &&
       areWordsTheSame(match.englishWordID, match.spanishWordID)
     ) {
-      const newSpanishWords = words.spanishWords.filter(
-        (word) => word.id !== match.spanishWordID
-      );
-      const newEnglishWords = words.englishWords.filter(
-        (word) => word.id !== match.englishWordID
-      );
-
-      setMatch({
-        spanishWordID: '',
-        englishWordID: '',
-      });
-
       setTimeout(() => {
-        setWords({
-          spanishWords: newSpanishWords,
-          englishWords: newEnglishWords,
+        setMatch({
+          spanishWordID: '',
+          englishWordID: '',
         });
-      }, 500);
+
+        const randomPairOfNewWords = getRandomWord(data);
+        const newRandomSpanishWord = getWords('spanish', [
+          randomPairOfNewWords,
+        ]);
+        const newRandomEnglishWord = getWords('english', [
+          randomPairOfNewWords,
+        ]);
+
+        setWords((prev) => ({
+          spanishWords: shuffleArray([
+            ...prev.spanishWords.filter(
+              (word) => word.id !== match.spanishWordID
+            ),
+            ...newRandomSpanishWord,
+          ]),
+          englishWords: shuffleArray([
+            ...prev.englishWords.filter(
+              (word) => word.id !== match.englishWordID
+            ),
+            ...newRandomEnglishWord,
+          ]),
+        }));
+      }, 200);
     }
-  }, [match]);
+  }, [match, words.englishWords, words.spanishWords]);
 
   return (
     <main className="min-h-screen bg-gray-900">

@@ -49,9 +49,9 @@ const WordColumn = ({ words, language, setMatch, match }: ColumnProps) => {
 
   return (
     <aside className="flex flex-col gap-4">
-      {words.map(({ text, id }) => (
+      {words.map(({ text, id }, idx) => (
         <Button
-          key={`${id}-${text}`}
+          key={`${id}-${text}-${idx}`}
           id={id}
           onClick={() => saveWordID(id)}
           className={clsx(
@@ -59,7 +59,7 @@ const WordColumn = ({ words, language, setMatch, match }: ColumnProps) => {
             correctMatchStyle(match.spanishWordID, match.englishWordID, id),
             id === match.spanishWordID &&
               id === match.englishWordID &&
-              'opacity-0 transition-opacity delay-150 duration-300'
+              'opacity-0 transition-opacity delay-150 duration-1500'
           )}
         >
           {text}
